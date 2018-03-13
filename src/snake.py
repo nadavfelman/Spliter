@@ -7,7 +7,7 @@ class joint(object):
     [summary]  
     """
 
-    def __init__(self, location, length, angle=0, son=None, color=(255, 255, 255)):
+    def __init__(self, location, length, angle=0, color=(255, 255, 255), width=5):
         """[summary]
 
         Arguments:
@@ -21,8 +21,8 @@ class joint(object):
         self.location = location
         self.length = length
         self.angle = angle
-        self.son = son
         self.color = color
+        self.width = width
 
     def move(self, new_location, max_pixels=None):
         """[summary]
@@ -47,9 +47,6 @@ class joint(object):
                 new_y = new_location.y - self.length * math.sin(self.angle)
                 self.location = pygame.math.Vector2(new_x, new_y)
 
-        if self.son:
-            self.son.move(self.location, max_pixels)
-
     def head(self):
         """[summary]
 
@@ -61,16 +58,15 @@ class joint(object):
         head_y = self.location.y + self.length * math.sin(self.angle)
         return pygame.math.Vector2(head_x, head_y)
 
-    def draw(self, screen):
+    def draw(self, surface, color=None, width=None):
         """[summary]
 
         Arguments:
-            screen {[type]} -- [description]
+            surface {[type]} -- [description]
         """
-
-        pygame.draw.line(screen, self.color, self.location, self.head(), 5)
-        if self.son:
-            self.son.draw(screen)
+        color = color or self.color
+        width = width or self.width
+        pygame.draw.line(surface, self.color, self.location, self.head(), width)
 
 
 class snake(pygame.sprite.Sprite):
@@ -78,13 +74,35 @@ class snake(pygame.sprite.Sprite):
     [summary]
     """
 
-    def __init__(self, location, length=1):
-        self.joints = joint(location, 1)
+    def __init__(self, location):
+        self.head = joint(location, 40, color=(255, 0, 0))
+        self.tail = []
 
-    def add_joints(self, amount):
-        pos = self.joints
-        while pos.son != None:
-            pos = pos.son
+    def length(self):
+        return 1 + len(self.tail)
+
+    def move(self, new_location, max_pixels=None):
+        self.head.move(new_location, max_pixels)
+        pre = self.head.location
+        for j in self.tail:
+            j.move(pre, max_pixels)
+            pre = j.location
+
+    def draw(self, surface):
+        length = self.length()
+        self.head.draw(surface)
+        length-=1
+        for j in self.tail:
+            j.draw(surface)
+            length-=1
+
+    def add(self, amount):
         for _ in xrange(amount):
-            pos.son = joint(pygame.math.Vector2(0, 0), 1)
-            pos = pos.son
+            if self.tail:
+                loc = self.tail[-1].location
+            else:
+                loc = self.head.location
+            self.tail.append(joint(loc, 5))
+
+    def sub(self, amount):
+        self.tail = self.tail[0:-amount]

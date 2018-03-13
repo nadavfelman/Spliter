@@ -9,7 +9,8 @@ clock = pygame.time.Clock()
 pygame.init()
 screen = pygame.display.set_mode((960, 540))
 
-s = snake.joint(pygame.math.Vector2(5,10), 40, son=snake.joint(pygame.math.Vector2(5,5), 20, son=snake.joint(pygame.math.Vector2(5,5), 70, color=(0,255,0)), color=(255,0,0)))
+s = snake.snake(pygame.math.Vector2(0,0))
+s.add(20)
 
 while not exit_:
     screen.fill((0,0,0))
