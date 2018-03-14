@@ -1,0 +1,8 @@
+WHITE = (255,255,255)
+GRAY = (126,126,126)
+BLACK = (0,0,0)
+RED = ()
+BLUE = ()
+YELLOW = ()
+GREEN = ()
+PURPLE = ()
