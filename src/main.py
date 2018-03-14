@@ -10,7 +10,7 @@ pygame.init()
 screen = pygame.display.set_mode((960, 540))
 
 s = snake.snake(pygame.math.Vector2(0,0))
-s.add(20)
+s.add(300)
 
 while not exit_:
     screen.fill((0,0,0))
@@ -24,4 +24,4 @@ while not exit_:
     # print s.location, s.head(), math.degrees(s.angle)
 
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(30)

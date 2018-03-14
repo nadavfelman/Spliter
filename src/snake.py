@@ -38,7 +38,7 @@ class joint(object):
         self.angle = math.atan2(dy, dx)
 
         if self.head() != new_location:
-            if self.location.distance_to(new_location) - self.length > self.length:
+            if max_pixels and self.location.distance_to(new_location) - self.length > max_pixels:
                 new_x = self.location.x + max_pixels * math.cos(self.angle)
                 new_y = self.location.y + max_pixels * math.sin(self.angle)
                 self.location = pygame.math.Vector2(new_x, new_y)
@@ -75,7 +75,7 @@ class snake(pygame.sprite.Sprite):
     """
 
     def __init__(self, location):
-        self.head = joint(location, 40, color=(255, 0, 0))
+        self.head = joint(location, 10, color=(255, 0, 0))
         self.tail = []
 
     def length(self):
@@ -85,16 +85,13 @@ class snake(pygame.sprite.Sprite):
         self.head.move(new_location, max_pixels)
         pre = self.head.location
         for j in self.tail:
-            j.move(pre, max_pixels)
+            j.move(pre)
             pre = j.location
 
     def draw(self, surface):
-        length = self.length()
         self.head.draw(surface)
-        length-=1
         for j in self.tail:
             j.draw(surface)
-            length-=1
 
     def add(self, amount):
         for _ in xrange(amount):
