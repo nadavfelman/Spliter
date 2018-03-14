@@ -102,4 +102,4 @@ class snake(pygame.sprite.Sprite):
             self.tail.append(joint(loc, 5))
 
     def sub(self, amount):
-        self.tail = self.tail[0:-amount]
+         self.tail = self.tail[0:-amount]
