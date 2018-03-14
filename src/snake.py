@@ -7,7 +7,7 @@ class joint(object):
     [summary]  
     """
 
-    def __init__(self, location, length, angle=0, color=(255, 255, 255), width=5):
+    def __init__(self, location, length, **kwargs):
         """[summary]
 
         Arguments:
@@ -20,9 +20,9 @@ class joint(object):
         """
         self.location = location
         self.length = length
-        self.angle = angle
-        self.color = color
-        self.width = width
+        self.angle = kwargs.get('angle', 0) 
+        self.color = kwargs.get('color', (255, 255, 255))
+        self.width = kwargs.get('width', 5)
 
     def move(self, new_location, max_pixels=None):
         """[summary]
@@ -58,15 +58,15 @@ class joint(object):
         head_y = self.location.y + self.length * math.sin(self.angle)
         return pygame.math.Vector2(head_x, head_y)
 
-    def draw(self, surface, color=None, width=None):
+    def draw(self, surface, **kwargs):
         """[summary]
 
         Arguments:
             surface {[type]} -- [description]
         """
-        color = color or self.color
-        width = width or self.width
-        pygame.draw.line(surface, self.color, self.location, self.head(), width)
+        color = kwargs.get('color', self.color)
+        width = kwargs.get('width', self.width)
+        pygame.draw.line(surface, color, self.location, self.head(), width)
 
 
 class snake(pygame.sprite.Sprite):
@@ -74,32 +74,89 @@ class snake(pygame.sprite.Sprite):
     [summary]
     """
 
-    def __init__(self, location):
-        self.head = joint(location, 10, color=(255, 0, 0))
+    def __init__(self, location, **kwargs):
+        """[summary]
+        
+        Arguments:
+            location {[type]} -- [description]
+        """
+
+        self.name = ''
+        self.mess = 0
+
+        self.default_speed = kwargs.get('default_speed', 10)
+        self.high_speed = kwargs.get('high_speed', 20)
+
+        self.head_color = kwargs.get('head_color', (255,0,0))
+        self.head_width = kwargs.get('head_width', 2)
+        self.head_length = kwargs.get('head_length', 10)
+
+        self.tail_color = kwargs.get('tail_color', (255,255,255))
+        self.tail_width = kwargs.get('tail_width', 1)
+        self.tail_length = kwargs.get('tail_length', 4)
+        
+        self.head = joint(location, 10, color=self.head_color, width=self.head_width)
         self.tail = []
+        self.speed = self.default_speed
 
     def length(self):
+        """[summary]
+        
+        Returns:
+            [type] -- [description]
+        """
+
         return 1 + len(self.tail)
 
-    def move(self, new_location, max_pixels=None):
-        self.head.move(new_location, max_pixels)
+    def move(self, new_location, **kwargs):
+        """[summary]
+        
+        Arguments:
+            new_location {[type]} -- [description]
+        """
+
+        speed = kwargs.get('speed', self.speed)
+
+        self.head.move(new_location, speed)
         pre = self.head.location
         for j in self.tail:
             j.move(pre)
             pre = j.location
 
     def draw(self, surface):
+        """[summary]
+        
+        Arguments:
+            surface {[type]} -- [description]
+        """
+
         self.head.draw(surface)
         for j in self.tail:
             j.draw(surface)
 
-    def add(self, amount):
+    def add(self, amount, **kwargs):
+        """[summary]
+        
+        Arguments:
+            amount {[type]} -- [description]
+        """
+
+        color = kwargs.get('color', self.tail_color)
+        width = kwargs.get('width', self.tail_width)
+        length = kwargs.get('length', self.tail_length)
+
         for _ in xrange(amount):
             if self.tail:
                 loc = self.tail[-1].location
             else:
                 loc = self.head.location
-            self.tail.append(joint(loc, 5))
+            self.tail.append(joint(loc, length, color=color, width=width))
 
     def sub(self, amount):
+        """[summary]
+        
+        Arguments:
+            amount {[type]} -- [description]
+        """
+
         self.tail = self.tail[0:-amount]

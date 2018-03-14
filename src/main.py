@@ -1,6 +1,6 @@
-import snake
-import pygame
 import math
+import pygame
+import snake
 
 exit_ = False
 clock = pygame.time.Clock()
@@ -18,7 +18,7 @@ while not exit_:
         if event.type == pygame.QUIT:
             exit_ = True
 
-    s.move(pygame.math.Vector2(*pygame.mouse.get_pos()), 20)
+    s.move(pygame.math.Vector2(*pygame.mouse.get_pos()), speed=5)
     s.draw(screen)
 
     # print s.location, s.head(), math.degrees(s.angle)
