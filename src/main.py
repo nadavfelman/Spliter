@@ -20,7 +20,7 @@ while not exit_:
 
     screen.fill((0, 0, 0))
 
-    s.move(pygame.math.Vector2(*pygame.mouse.get_pos()), 20)
+    s.move(pygame.math.Vector2(*pygame.mouse.get_pos()), 5)
     s.draw(screen)
 
     pygame.display.flip()
