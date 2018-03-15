@@ -1,8 +1,9 @@
-import snake
-import pygame
 import math
 import food
 import global_variables
+import pygame
+import snake
+
 
 exit_ = False
 clock = pygame.time.Clock()
@@ -20,8 +21,8 @@ while not exit_:
 
     screen.fill((0, 0, 0))
 
-    s.move(pygame.math.Vector2(*pygame.mouse.get_pos()), 5)
-    s.draw(screen)
+    s.update(pygame.math.Vector2(*pygame.mouse.get_pos()), speed=5)
+    s.draw_centered(screen)
 
     pygame.display.flip()
     clock.tick(30)
