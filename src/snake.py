@@ -47,7 +47,7 @@ class joint(object):
             # check if any max pixels moving distance was given.
             # if was given it check whether the distance need to be moved is greater than the max moving distance.
             # if this returns true constrain the movement to the max moving distance else move regularly.
-            # see attache number 0000
+            # see attache number 0000.
             if max_pixels and self.location.distance_to(new_location) - self.length > max_pixels:
                 new_x = self.location.x + max_pixels * math.cos(self.angle)
                 new_y = self.location.y + max_pixels * math.sin(self.angle)
