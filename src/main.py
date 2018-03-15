@@ -18,8 +18,8 @@ while not exit_:
         if event.type == pygame.QUIT:
             exit_ = True
 
-    s.move(pygame.math.Vector2(*pygame.mouse.get_pos()), speed=5)
-    s.draw(screen)
-
+    s.update(pygame.math.Vector2(*pygame.mouse.get_pos()), speed=5)
+    s.draw_centered(screen)
+    
     pygame.display.flip()
     clock.tick(30)
