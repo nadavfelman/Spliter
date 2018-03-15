@@ -2,12 +2,13 @@ import snake
 import pygame
 import math
 import food
+import global_variables
 
 exit_ = False
 clock = pygame.time.Clock()
 
 pygame.init()
-screen = pygame.display.set_mode((960, 540))
+screen = pygame.display.set_mode((global_variables.WIDTH, global_variables.HEIGHT))
 
 s = snake.snake(pygame.math.Vector2(0, 0))
 s.add(300)
