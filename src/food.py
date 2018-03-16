@@ -28,7 +28,7 @@ class food(pygame.sprite.Sprite):
 
     def draw(self, surface):
         location = (int(self.location.x), int(self.location.y))
-        pygame.draw.circle(surface, self.color, location, self.radius, 1)
+        pygame.draw.circle(surface, self.color, location, self.radius)
 
     @staticmethod
     def new_random():
