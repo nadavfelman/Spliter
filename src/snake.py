@@ -4,7 +4,6 @@ import pygame
 
 import global_variables
 
-
 class joint(object):
     """
     [summary]  
@@ -48,13 +47,14 @@ class joint(object):
         # if the head of the joint is on the location it does not need to be moved
         if self.head() != new_location:
             # check if any max pixels moving distance was given.
-            # if was given it check whether the distance need to be moved is greater than the max moving distance.
+            # if was given it checks whether the distance need to be moved is greater than the max moving distance.
             # if this returns true constrain the movement to the max moving distance else move regularly.
             # see attache number 0000.
             if max_pixels and self.location.distance_to(new_location) - self.length > max_pixels:
                 new_x = self.location.x + max_pixels * math.cos(self.angle)
                 new_y = self.location.y + max_pixels * math.sin(self.angle)
                 self.location = pygame.math.Vector2(new_x, new_y)
+
             else:
                 new_x = new_location.x - self.length * math.cos(self.angle)
                 new_y = new_location.y - self.length * math.sin(self.angle)
@@ -63,7 +63,7 @@ class joint(object):
     def update(self, speed):
         new_x = self.location.x + speed * math.cos(self.angle)
         new_y = self.location.y + speed * math.sin(self.angle)
-        self.move(pygame.math.Vector2(new_x, new_y), speed)
+        self.location = pygame.math.Vector2(new_x, new_y)
 
     def head(self):
         """[summary]
@@ -84,7 +84,8 @@ class joint(object):
         """
         color = kwargs.get('color', self.color)
         width = kwargs.get('width', self.width)
-        pygame.draw.line(surface, color, self.location, self.head(), width)
+        location = (int(self.location.x), int(self.location.y))
+        pygame.draw.circle(surface, color, location, width)
 
 
 class snake(pygame.sprite.Sprite):
@@ -102,8 +103,8 @@ class snake(pygame.sprite.Sprite):
         self.name = ''
         self.mess = 0
 
-        self.default_speed = kwargs.get('default_speed', 10)
-        self.high_speed = kwargs.get('high_speed', 20)
+        self.default_speed = kwargs.get('default_speed', 1)
+        self.high_speed = kwargs.get('high_speed', 7)
 
         self.head_color = kwargs.get('head_color', (255, 0, 0))
         self.head_width = kwargs.get('head_width', 2)
@@ -113,8 +114,8 @@ class snake(pygame.sprite.Sprite):
         self.tail_width = kwargs.get('tail_width', 1)
         self.tail_length = kwargs.get('tail_length', 4)
 
-        self.head = joint(location, 10, color=self.head_color,
-                          width=self.head_width)
+        self.head = joint(location, self.head_length, 
+                          color=self.head_color, width=self.head_width)
         self.tail = []
         self.speed = self.default_speed
 
@@ -127,7 +128,22 @@ class snake(pygame.sprite.Sprite):
 
         return 1 + len(self.tail)
 
-    def update(self, new_location, **kwargs):
+    def update(self, **kwargs):
+        """[summary]
+
+        Arguments:
+            new_location {[type]} -- [description]
+        """
+
+        speed = kwargs.get('speed', self.speed)
+
+        self.head.update(speed)
+        pre = self.head.location
+        for sector in self.tail:
+            sector.move(pre)
+            pre = sector.location
+    
+    def move(self, new_location, **kwargs):
         """[summary]
 
         Arguments:
@@ -140,9 +156,9 @@ class snake(pygame.sprite.Sprite):
 
         self.head.move(new_location, speed)
         pre = self.head.location
-        for j in self.tail:
-            j.move(pre)
-            pre = j.location
+        for sector in self.tail:
+            sector.move(pre)
+            pre = sector.location
 
     def draw(self, surface):
         """[summary]
@@ -155,16 +171,13 @@ class snake(pygame.sprite.Sprite):
         for j in self.tail:
             j.draw(surface)
 
-    def inc_angle(self, amount):
-        self.head.angle += amount
-
-    def dec_angle(self, amount):
-        self.head.angle -= amount
-
     def direct_to(self, location):
         dx = location.x - self.head.location.x
         dy = location.y - self.head.location.y
         self.head.angle = math.atan2(dy, dx)
+    
+    def set_angle(self, angle):
+        self.head.angle = angle
 
     def add(self, amount, **kwargs):
         """[summary]

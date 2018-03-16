@@ -1,3 +1,6 @@
+from math import atan2
+
+
 def map_range(value, (min1, max1), (min2, max2)):
     """
     translate a value from one range of values to another range of values.
@@ -25,16 +28,16 @@ def constraint(value, min, max):
 
     example: constraint(3, 10, 50) => 10
     example: constraint(7, 1, 10) => 7
-    
+
     Arguments:
         value {int} --  a value to be constraint
         min {int} -- minimum value
         max {int} -- maximum value
-    
+
     Returns:
         int -- constrainted value
     """
-    
+
     if value < min:
         return min
     elif value > max:
@@ -50,15 +53,32 @@ def range_intersect(a1, a2, b1, b2):
 
     example: range_intersect(0, 8, 4, 9) -> True
     example: range_intersect(0, 8, 9, 17) -> False
-    
+
     Arguments:
         a1 {int} -- first value of first range
         a2 {int} -- second value of first range
         b1 {int} -- first value of second range
         b2 {int} -- second value of second range
-    
+
     Returns:
         bool -- does the ranges intersect
     """
 
     return max(a1, a2) >= min(b1, b2) and min(a1, a2) <= max(b1, b2)
+
+
+def incline_angle((x1, y1), (x2, y2)):
+    """[summary]
+
+    Arguments:
+        point1 {tuple} -- the first point. the tuple is (x, y)
+        point2 {tuple} -- the second point. the tuple is (x, y)
+
+    Returns:
+        int -- angle of the incline in radians
+    """
+
+    dx = x2 - x1
+    dy = y2 - y1
+    return atan2(dy, dx)
+
