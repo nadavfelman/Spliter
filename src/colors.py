@@ -9,6 +9,8 @@ BLACK = (0, 0, 0)
 # reds
 RED_BASIC = (255, 0, 0)
 RED = (220, 48, 75)
+DEAD_RED = (51, 8, 25)
+DARK_DEAD_RED = (23, 3, 11)
 
 # greens
 GREEN_BASIC = (0, 255, 0)
