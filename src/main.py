@@ -26,7 +26,7 @@ while not exit_:
         if event.type == pygame.QUIT:
             exit_ = True
 
-    screen.fill(colors.RED)
+    screen.fill(colors.DARK_DEAD_RED)
     game_board = pygame.Surface(
         (global_variables.BOARD_WIDTH, global_variables.BOARD_HEIGHT))
 
