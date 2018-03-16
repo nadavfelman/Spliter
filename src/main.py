@@ -12,7 +12,7 @@ pygame.init()
 screen = pygame.display.set_mode((global_variables.WIDTH, global_variables.HEIGHT))
 
 s = snake.snake(pygame.math.Vector2(0, 0))
-s.add(300)
+s.add(100)
 
 while not exit_:
     for event in pygame.event.get():

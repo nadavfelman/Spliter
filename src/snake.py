@@ -1,5 +1,6 @@
 import math
 import pygame
+import global_variables
 
 
 class joint(object):
@@ -27,7 +28,7 @@ class joint(object):
     def direct_to(self, location):
         dx = location.x - self.location.x
         dy = location.y - self.location.y
-        self.head.angle = math.atan2(dy, dx)
+        self.angle = math.atan2(dy, dx)
 
     def move(self, new_location, max_pixels=None):
         """[summary]
@@ -60,7 +61,7 @@ class joint(object):
     def update(self, speed):
         new_x = self.location.x + speed * math.cos(self.angle)
         new_y = self.location.y + speed * math.sin(self.angle)
-        self.location = pygame.math.Vector2(new_x, new_y)
+        self.move(pygame.math.Vector2(new_x, new_y), speed)
 
     def head(self):
         """[summary]
@@ -104,7 +105,7 @@ class snake(pygame.sprite.Sprite):
 
         self.head_color = kwargs.get('head_color', (255, 0, 0))
         self.head_width = kwargs.get('head_width', 2)
-        self.head_length = kwargs.get('head_length', 10)
+        self.head_length = kwargs.get('head_length', 4)
 
         self.tail_color = kwargs.get('tail_color', (255, 255, 255))
         self.tail_width = kwargs.get('tail_width', 1)
@@ -135,7 +136,7 @@ class snake(pygame.sprite.Sprite):
 
         self.direct_to(new_location)
 
-        self.head.update(speed)
+        self.head.move(new_location, speed)
         pre = self.head.location
         for j in self.tail:
             j.move(pre)
@@ -165,10 +166,11 @@ class snake(pygame.sprite.Sprite):
 
     def draw_centered(self, surface):
         temp_surface = pygame.Surface((960, 540))
+        temp_surface.fill((120,120,0))
         self.draw(temp_surface)
 
-        x = 960 / 2 - self.head.location.x
-        y = 540 / 2 - self.head.location.y
+        x = global_variables.WIDTH / 2 - self.head.location.x
+        y = global_variables.HEIGHT / 2 - self.head.location.y
         surface.blit(temp_surface, (x, y))
 
     def add(self, amount, **kwargs):
