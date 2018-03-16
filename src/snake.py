@@ -1,5 +1,7 @@
 import math
+
 import pygame
+
 import global_variables
 
 
@@ -44,7 +46,7 @@ class joint(object):
 
         # check if the joint needs to be moved
         # if the head of the joint is on the location it does not need to be moved
-        if self.head() != new_location: 
+        if self.head() != new_location:
             # check if any max pixels moving distance was given.
             # if was given it check whether the distance need to be moved is greater than the max moving distance.
             # if this returns true constrain the movement to the max moving distance else move regularly.
@@ -163,15 +165,6 @@ class snake(pygame.sprite.Sprite):
         dx = location.x - self.head.location.x
         dy = location.y - self.head.location.y
         self.head.angle = math.atan2(dy, dx)
-
-    def draw_centered(self, surface):
-        temp_surface = pygame.Surface((960, 540))
-        temp_surface.fill((120,120,0))
-        self.draw(temp_surface)
-
-        x = global_variables.WIDTH / 2 - self.head.location.x
-        y = global_variables.HEIGHT / 2 - self.head.location.y
-        surface.blit(temp_surface, (x, y))
 
     def add(self, amount, **kwargs):
         """[summary]
