@@ -4,9 +4,9 @@ import pygame
 
 import colors
 import food
+import functions
 import settings
 import snake
-import functions
 
 exit_ = False
 clock = pygame.time.Clock()
@@ -33,9 +33,9 @@ while not exit_:
         (settings.BOARD_WIDTH, settings.BOARD_HEIGHT))
     screen.fill(settings.BACKGROUND_COLOR)
 
-    scl = 2 # 6 / s.size()
-    xoff = -s.head.location.x + settings.WINDOW_WIDTH / 2
-    yoff = -s.head.location.y + settings.WINDOW_HEIGHT / 2
+    scl = 3 # 6 / s.size()
+    xoff = -s.head.location.x * scl + settings.WINDOW_WIDTH / 2
+    yoff = -s.head.location.y * scl + settings.WINDOW_HEIGHT / 2
 
     mouse_loc = pygame.mouse.get_pos()
     middle_loc = (settings.WINDOW_WIDTH / 2,
@@ -45,7 +45,7 @@ while not exit_:
     s.draw(game_board, scl, xoff, yoff)
 
     for f in foods:
-        f.draw(game_board, scl, xoff, yoff)
+        f.draw(game_board, scale=scl, xoff=xoff, yoff=yoff)
 
     screen.blit(game_board, (0, 0))
 

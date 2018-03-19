@@ -1,9 +1,9 @@
 import math
 
+import numpy as np
 import pygame
 
 import settings
-import numpy as np
 
 
 class joint(object):
@@ -102,7 +102,7 @@ class snake(pygame.sprite.Sprite):
         """
 
         self.name = ''
-        self.length = 5
+        self.length = 100
 
         self.default_speed = kwargs.get('default_speed', 1)
         self.high_speed = kwargs.get('high_speed', 7)
@@ -148,22 +148,13 @@ class snake(pygame.sprite.Sprite):
         Arguments:
             surface {[type]} -- [description]
         """
-        # matrix = np.array([[j.location.x, j.location.y] for j in self.tail])
-        matrix = np.array([[j.location.x + xoff, j.location.y + yoff] for j in self.tail])
+        matrix = np.array([[j.location.x, j.location.y] for j in self.tail])
         scale_vector = np.array([[scale, 0], [0, scale]])
-        # print matrix, scale_vector
+
         scaled_matrix = np.matmul(matrix, scale_vector)
-        # print scaled_matrix
-        # print np.array([[x +xoff*scale,y + yoff*scale] for x,y in scaled_matrix])
-        # matrix2 = np.array([[j.location.x + xoff, j.location.y + yoff] for j in self.tail])
-        # scaled_matrix2 = np.matmul(matrix2, scale_vector)
-        # print scaled_matrix2
-        # print()
 
         for x, y in scaled_matrix:
-            # offseted_x = x + xoff * scale
-            # offseted_y = y + yoff * scale
-            pos = (int(x), int(y))
+            pos = (int(x + xoff), int(y + yoff))
 
             radius = int(self.tail_radius * scale)
 

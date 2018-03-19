@@ -1,5 +1,6 @@
-from random import randint, choice
+from random import choice, randint
 
+import numpy as np
 import pygame
 
 import colors
@@ -27,8 +28,14 @@ class food(pygame.sprite.Sprite):
         self.width = 1
 
     def draw(self, surface, scale=1, xoff=0, yoff=0):
-        offseted_x = self.location.x + xoff * scale
-        offseted_y = self.location.y + yoff * scale
+        vector = np.array([self.location.x, self.location.y])
+        scale_vector = np.array([[scale, 0], [0, scale]])
+
+        scaled_vector = vector.dot(scale_vector)
+        x, y = scaled_vector
+
+        offseted_x = x + xoff
+        offseted_y = y + yoff
         pos = (int(offseted_x), int(offseted_y))
 
         radius = int(self.radius * scale)
