@@ -3,7 +3,7 @@ from random import randint, choice
 import pygame
 
 import colors
-import global_variables
+import settings
 
 
 class food(pygame.sprite.Sprite):
@@ -26,15 +26,20 @@ class food(pygame.sprite.Sprite):
         self.radius = value  # radius of the circle, it has connection to the value
         self.width = 1
 
-    def draw(self, surface):
-        location = (int(self.location.x), int(self.location.y))
-        pygame.draw.circle(surface, self.color, location, self.radius)
+    def draw(self, surface, scale=1, xoff=0, yoff=0):
+        offseted_x = self.location.x + xoff * scale
+        offseted_y = self.location.y + yoff * scale
+        pos = (int(offseted_x), int(offseted_y))
+
+        radius = int(self.radius * scale)
+
+        pygame.draw.circle(surface, self.color, pos, radius)
 
     @staticmethod
     def new_random():
         # get new random location
-        x = randint(0, global_variables.WINDOW_WIDTH)
-        y = randint(0, global_variables.WINDOW_HEIGHT)
+        x = randint(0, settings.WINDOW_WIDTH)
+        y = randint(0, settings.WINDOW_HEIGHT)
         location = pygame.math.Vector2(x, y)
 
         # get random value
