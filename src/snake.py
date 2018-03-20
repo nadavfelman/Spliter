@@ -4,6 +4,7 @@ import numpy as np
 import pygame
 
 import settings
+import colors
 
 
 class joint(object):
@@ -93,6 +94,15 @@ class snake(pygame.sprite.Sprite):
     """
     [summary]
     """
+    DEFAULT_REGULAR_SPEED = 1
+    DEFAULT_HIGH_SPEED = 5
+    DEFAULT_HEAD_COLOR = colors.RED
+    DEFAULT_TAIL_COLOR = colors.GRAY66
+
+    SHADOW_XOFF = 1
+    SHADOW_YOFF = 1
+    SHADOW_HEAD_COLOR = colors.DARK_RED
+    SHADOW_TAIL_COLOR = colors.GRAY126
 
     def __init__(self, location, **kwargs):
         """[summary]
@@ -102,27 +112,26 @@ class snake(pygame.sprite.Sprite):
         """
 
         self.name = ''
-        self.length = 100
+        self.length = 5
 
-        self.default_speed = kwargs.get('default_speed', 1)
-        self.high_speed = kwargs.get('high_speed', 7)
+        self.regular_speed = kwargs.get(
+            'default_speed', snake.DEFAULT_REGULAR_SPEED)
+        self.high_speed = kwargs.get('high_speed', snake.DEFAULT_HIGH_SPEED)
 
-        self.head_color = kwargs.get('head_color', (255, 0, 0))
-        self.head_radius = kwargs.get('head_radius', 5)
-        self.head_length = kwargs.get('head_length', 3)
+        self.head_color = kwargs.get('head_color', snake.DEFAULT_HEAD_COLOR)
+        self.tail_color = kwargs.get('tail_color', snake.DEFAULT_TAIL_COLOR)
 
-        self.tail_color = kwargs.get('tail_color', (255, 255, 255))
-        self.tail_radius = kwargs.get('tail_radius', 5)
-        self.tail_length = kwargs.get('tail_length', 3)
-
-        self.head = joint(location, self.head_length)
+        self.head = joint(location, self.distance)
         self.tail = []
-        self.speed = self.default_speed
+        self.speed = self.regular_speed
 
         self.increase_length(self.length)
 
-    def size(self):
-        return 0.02 * self.length + 1
+    def radius(self):
+        return 0.2 * self.length + 2
+
+    def distance(self):
+        return self.radius() / 2
 
     def move(self, **kwargs):
         """[summary]
@@ -140,25 +149,54 @@ class snake(pygame.sprite.Sprite):
             pre = sector.location
 
     def update(self):
+        self.change_distance(self.distance())
         self.move()
 
     def draw(self, surface, scale=1, xoff=0, yoff=0):
         """[summary]
-
+        
         Arguments:
             surface {[type]} -- [description]
+        
+        Keyword Arguments:
+            scale {int} -- [description] (default: {1})
+            xoff {int} -- [description] (default: {0})
+            yoff {int} -- [description] (default: {0})
         """
-        matrix = np.array([[j.location.x, j.location.y] for j in self.tail])
-        scale_vector = np.array([[scale, 0], [0, scale]])
 
+        # scale vector (for matrix or vector multiplication)
+        scale_vector = np.array([[scale, 0], [0, scale]])
+        # scaled radius of the circle
+        radius = int(self.radius() * scale)
+
+        # draw trail
+        # matrix of all the point in the trail
+        matrix = np.array([[j.location.x, j.location.y] for j in self.tail[::-1]])
+        # scaled matrix of the trail
         scaled_matrix = np.matmul(matrix, scale_vector)
 
         for x, y in scaled_matrix:
-            pos = (int(x + xoff), int(y + yoff))
+            # scaled x and y of one point with the offset applied
+            pos = (int(x + xoff), int(y + yoff))  # position of the joint
+            shadow_pos = (int(x + xoff + snake.SHADOW_XOFF), int(y + yoff + snake.SHADOW_YOFF))  # position of the shadow
 
-            radius = int(self.tail_radius * scale)
+            # draw the shadow of the joint
+            pygame.draw.circle(surface, snake.SHADOW_TAIL_COLOR, shadow_pos, radius)
+            pygame.draw.circle(surface, self.tail_color, pos, radius)  # draw the joint
 
-            pygame.draw.circle(surface, self.tail_color, pos, radius)
+        # draw head
+        # vector representing the location of head
+        vector = np.array([self.head.location.x, self.head.location.y])
+        scaled_vector = vector.dot(scale_vector)  # scaled vector of head
+        x, y = scaled_vector  # scaled x and y
+
+        # scaled x and y with the offset applied
+        pos = (int(x + xoff), int(y + yoff))  # position of the joint
+        shadow_pos = (int(x + xoff + snake.SHADOW_XOFF), int(y + yoff + snake.SHADOW_YOFF))  # position of the shadow
+
+        # draw the shadow of the joint
+        pygame.draw.circle(surface, snake.SHADOW_HEAD_COLOR, shadow_pos, radius)
+        pygame.draw.circle(surface, self.head_color, pos, radius)  # draw the joint
 
     def direct_to(self, location):
         dx = location.x - self.head.location.x
@@ -181,7 +219,7 @@ class snake(pygame.sprite.Sprite):
                 loc = self.tail[-1].location
             else:
                 loc = self.head.location
-            self.tail.append(joint(loc, self.tail_length))
+            self.tail.append(joint(loc, self.distance()))
 
     def decrease_length(self, amount):
         """[summary]
@@ -191,3 +229,8 @@ class snake(pygame.sprite.Sprite):
         """
 
         self.tail = self.tail[0: -amount]
+
+    def change_distance(self, distance):
+        self.head.distance = distance
+        for j in self.tail:
+            j.distance = distance

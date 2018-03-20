@@ -11,7 +11,7 @@ class food(pygame.sprite.Sprite):
     """[summary]
 
     """
-    MIN_VALUE = 1
+    MIN_VALUE = 3
     MAX_VALUE = 10
 
     POSSIBLE_COLORS = [colors.RED,
@@ -24,7 +24,7 @@ class food(pygame.sprite.Sprite):
         self.location = location
         self.value = value
         self.color = color
-        self.radius = value  # radius of the circle, it has connection to the value
+        self.radius = int(value / 2.5)  # radius of the circle, it has connection to the value
         self.width = 1
 
     def draw(self, surface, scale=1, xoff=0, yoff=0):

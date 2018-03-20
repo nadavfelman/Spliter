@@ -31,11 +31,14 @@ while not exit_:
     screen.fill(settings.DEADZONE_COLOR)
     game_board = pygame.Surface(
         (settings.BOARD_WIDTH, settings.BOARD_HEIGHT))
-    screen.fill(settings.BACKGROUND_COLOR)
+    game_board.fill(settings.BACKGROUND_COLOR)
 
-    scl = 3 # 6 / s.size()
+    scl = 15 / s.radius()
     xoff = -s.head.location.x * scl + settings.WINDOW_WIDTH / 2
     yoff = -s.head.location.y * scl + settings.WINDOW_HEIGHT / 2
+
+    for f in foods:
+        f.draw(game_board, scale=scl, xoff=xoff, yoff=yoff)
 
     mouse_loc = pygame.mouse.get_pos()
     middle_loc = (settings.WINDOW_WIDTH / 2,
@@ -43,9 +46,6 @@ while not exit_:
     s.set_angle(functions.incline_angle(middle_loc, mouse_loc))
     s.move()
     s.draw(game_board, scl, xoff, yoff)
-
-    for f in foods:
-        f.draw(game_board, scale=scl, xoff=xoff, yoff=yoff)
 
     screen.blit(game_board, (0, 0))
 
