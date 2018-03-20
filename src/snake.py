@@ -112,7 +112,7 @@ class snake(pygame.sprite.Sprite):
         """
 
         self.name = ''
-        self.length = 5
+        self.length = 100
 
         self.regular_speed = kwargs.get(
             'default_speed', snake.DEFAULT_REGULAR_SPEED)
@@ -128,7 +128,7 @@ class snake(pygame.sprite.Sprite):
         self.increase_length(self.length)
 
     def radius(self):
-        return 0.2 * self.length + 2
+        return 0.05 * self.length + 2
 
     def distance(self):
         return self.radius() / 2
@@ -203,7 +203,7 @@ class snake(pygame.sprite.Sprite):
         dy = location.y - self.head.location.y
         self.head.angle = math.atan2(dy, dx)
 
-    def set_angle(self, angle):
+    def set_angle(self, angle, lim=None):
         self.head.angle = angle
 
     def increase_length(self, amount):

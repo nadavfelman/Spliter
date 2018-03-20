@@ -18,7 +18,7 @@ screen = pygame.display.set_mode(
 s = snake.snake(pygame.math.Vector2(0, 0), default_speed=1)
 
 foods = []
-for _ in xrange(30):
+for _ in xrange(100):
     foods.append(food.food.new_random())
 
 while not exit_:
@@ -28,26 +28,21 @@ while not exit_:
         if event.type == pygame.QUIT:
             exit_ = True
 
-    screen.fill(settings.DEADZONE_COLOR)
-    game_board = pygame.Surface(
-        (settings.BOARD_WIDTH, settings.BOARD_HEIGHT))
-    game_board.fill(settings.BACKGROUND_COLOR)
+    screen.fill(settings.BACKGROUND_COLOR)
 
     scl = 15 / s.radius()
     xoff = -s.head.location.x * scl + settings.WINDOW_WIDTH / 2
     yoff = -s.head.location.y * scl + settings.WINDOW_HEIGHT / 2
 
     for f in foods:
-        f.draw(game_board, scale=scl, xoff=xoff, yoff=yoff)
+        f.draw(screen, scale=scl, xoff=xoff, yoff=yoff)
 
     mouse_loc = pygame.mouse.get_pos()
     middle_loc = (settings.WINDOW_WIDTH / 2,
                   settings.WINDOW_HEIGHT / 2)
-    s.set_angle(functions.incline_angle(middle_loc, mouse_loc))
+    s.set_angle(functions.incline_angle(middle_loc, mouse_loc), lim=math.radians(2))
     s.move()
-    s.draw(game_board, scl, xoff, yoff)
-
-    screen.blit(game_board, (0, 0))
+    s.draw(screen, scl, xoff, yoff)
 
     pygame.display.flip()
     clock.tick(60)
