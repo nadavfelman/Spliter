@@ -16,7 +16,7 @@ pygame.init()
 screen = pygame.display.set_mode(
     (settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT))
 
-s = snake.snake(pygame.math.Vector2(0, 0), default_speed=1)
+s = snake.snake(pygame.math.Vector2(0, 0), default_speed=0.7)
 b = background.background(0, settings.BOARD_WIDTH, 0, settings.BOARD_HEIGHT, settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT)
 
 foods = []

@@ -47,6 +47,10 @@ class joint(object):
         Keyword Arguments:
             speed {int} -- [description] (default: {None})
         """
+        # breke out if already in place
+        if self.previous() == new_location:
+            return
+        
         # chage the angle so it will point at the new location
         self.direct_to(new_location)
 
@@ -94,6 +98,7 @@ class snake(pygame.sprite.Sprite):
     """
     [summary]
     """
+    DEFUALT_LENGTH = 10
     DEFAULT_REGULAR_SPEED = 1
     DEFAULT_HIGH_SPEED = 5
     DEFAULT_HEAD_COLOR = colors.RED
@@ -112,7 +117,7 @@ class snake(pygame.sprite.Sprite):
         """
 
         self.name = ''
-        self.length = 100
+        self.length = snake.DEFUALT_LENGTH
 
         self.regular_speed = kwargs.get(
             'default_speed', snake.DEFAULT_REGULAR_SPEED)
@@ -149,7 +154,8 @@ class snake(pygame.sprite.Sprite):
             pre = sector.location
 
     def update(self):
-        self.change_distance(self.distance())
+        if self.head.distance != self.distance():
+            self.change_distance(self.distance())
         self.move()
 
     def draw(self, surface, scale=1, xoff=0, yoff=0):
