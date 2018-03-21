@@ -53,4 +53,4 @@ while not exit_:
     pygame.draw.rect(screen, (0,0,0), (xoff - 5, yoff - 5, 10, 10))
 
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(settings.REFRESH_RATE)

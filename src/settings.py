@@ -1,5 +1,7 @@
 import colors
 
+REFRESH_RATE = 600
+
 WINDOW_WIDTH = 1920
 WINDOW_HEIGHT = 1080
 
