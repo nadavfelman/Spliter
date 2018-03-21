@@ -4,52 +4,45 @@ import pygame
 
 import colors
 import food
-import global_variables
-import snake
 import functions
+import settings
+import snake
 
 exit_ = False
 clock = pygame.time.Clock()
 
 pygame.init()
 screen = pygame.display.set_mode(
-    (global_variables.WINDOW_WIDTH, global_variables.WINDOW_HEIGHT))
+    (settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT))
 
 s = snake.snake(pygame.math.Vector2(0, 0), default_speed=1)
-s.add(100)
 
 foods = []
-for _ in xrange(30):
+for _ in xrange(100):
     foods.append(food.food.new_random())
 
 while not exit_:
+    print 'fps: {}'.format(clock.get_fps())
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             exit_ = True
 
-    screen.fill(colors.DARK_DEAD_RED)
-    game_board = pygame.Surface(
-        (global_variables.BOARD_WIDTH, global_variables.BOARD_HEIGHT))
+    screen.fill(settings.BACKGROUND_COLOR)
 
-    mouse_loc = pygame.mouse.get_pos()
-    middle_loc = (global_variables.WINDOW_WIDTH / 2,
-                  global_variables.WINDOW_HEIGHT / 2)
-    s.set_angle(functions.incline_angle(middle_loc, mouse_loc))
-    s.update()
-    s.draw(game_board)
+    scl = 15 / s.radius()
+    xoff = -s.head.location.x * scl + settings.WINDOW_WIDTH / 2
+    yoff = -s.head.location.y * scl + settings.WINDOW_HEIGHT / 2
 
     for f in foods:
-        f.draw(game_board)
+        f.draw(screen, scale=scl, xoff=xoff, yoff=yoff)
 
-    scl = 6 / s.head.width
-
-    x = -s.head.location.x * scl + global_variables.WINDOW_WIDTH / 2
-    y = -s.head.location.y * scl + global_variables.WINDOW_HEIGHT / 2
-
-    scaled_width = global_variables.BOARD_WIDTH * scl
-    scaled_height = global_variables.BOARD_HEIGHT * scl
-    scaled = pygame.transform.scale(game_board, (scaled_width, scaled_height))
-    screen.blit(scaled, (x, y))
+    mouse_loc = pygame.mouse.get_pos()
+    middle_loc = (settings.WINDOW_WIDTH / 2,
+                  settings.WINDOW_HEIGHT / 2)
+    s.set_angle(functions.incline_angle(middle_loc, mouse_loc), lim=math.radians(2))
+    s.move()
+    s.draw(screen, scl, xoff, yoff)
 
     pygame.display.flip()
     clock.tick(60)
