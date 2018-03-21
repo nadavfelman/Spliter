@@ -7,7 +7,7 @@ import food
 import functions
 import settings
 import snake
-import background
+import render
 
 exit_ = False
 clock = pygame.time.Clock()
@@ -17,7 +17,7 @@ screen = pygame.display.set_mode(
     (settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT))
 
 s = snake.snake(pygame.math.Vector2(0, 0), default_speed=0.7)
-b = background.background(0, settings.BOARD_WIDTH, 0, settings.BOARD_HEIGHT, settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT)
+b = render.background(0, settings.BOARD_WIDTH, 0, settings.BOARD_HEIGHT, settings.WINDOW_WIDTH, settings.WINDOW_HEIGHT)
 
 foods = []
 for _ in xrange(100):

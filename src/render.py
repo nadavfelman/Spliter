@@ -1,5 +1,6 @@
 import colors
 import pygame
+import settings
 
 
 class background(object):
@@ -25,7 +26,7 @@ class background(object):
         self.y_spacing = y_spacing or background.Y_SPACING
 
     def draw(self, surface, camera_x, camera_y, scl):
-        camera_x , camera_y = camera_x * scl, camera_y * scl
+        camera_x, camera_y = camera_x * scl, camera_y * scl
         width, height = self.width, self.height
         top = int(camera_y - height / 2)
         right = int(camera_x - width / 2)
@@ -48,3 +49,11 @@ class background(object):
         for y in filter(lambda y: y < self.min_y or y > self.max_y, xrange(top, buttom + 1)):
             pygame.draw.line(surface, background.OUTZONE_COLOR,
                              (0, y - top), (width, y - top), 1)
+
+
+def message_display(surface, text, x, y, size):
+    font = pygame.font.Font('freesansbold.ttf', size)
+    textSurface = font.render(text, True, colors.GRAY25)
+    TextRect = textSurface.get_rect()
+    TextRect.center = (x, y)
+    surface.blit(textSurface, TextRect)

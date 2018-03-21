@@ -5,6 +5,7 @@ import pygame
 
 import settings
 import colors
+import render
 
 
 class joint(object):
@@ -98,11 +99,12 @@ class snake(pygame.sprite.Sprite):
     """
     [summary]
     """
-    DEFUALT_LENGTH = 10
+    DEFAULT_LENGTH = 100
     DEFAULT_REGULAR_SPEED = 1
     DEFAULT_HIGH_SPEED = 5
     DEFAULT_HEAD_COLOR = colors.RED
     DEFAULT_TAIL_COLOR = colors.GRAY66
+    DEFAULT_NAME_SIZE = 17
 
     SHADOW_XOFF = 1
     SHADOW_YOFF = 1
@@ -116,8 +118,8 @@ class snake(pygame.sprite.Sprite):
             location {[type]} -- [description]
         """
 
-        self.name = ''
-        self.length = snake.DEFUALT_LENGTH
+        self.name = 'place holder'
+        self.length = snake.DEFAULT_LENGTH
 
         self.regular_speed = kwargs.get(
             'default_speed', snake.DEFAULT_REGULAR_SPEED)
@@ -159,6 +161,10 @@ class snake(pygame.sprite.Sprite):
         self.move()
 
     def draw(self, surface, scale=1, xoff=0, yoff=0):
+        self.draw_snake(surface, scale=scale, xoff=xoff, yoff=yoff)
+        self.draw_name(surface, scale=scale, xoff=xoff, yoff=yoff)
+
+    def draw_snake(self, surface, scale=1, xoff=0, yoff=0):
         """[summary]
         
         Arguments:
@@ -203,6 +209,12 @@ class snake(pygame.sprite.Sprite):
         # draw the shadow of the joint
         pygame.draw.circle(surface, snake.SHADOW_HEAD_COLOR, shadow_pos, radius)
         pygame.draw.circle(surface, self.head_color, pos, radius)  # draw the joint
+
+    def draw_name(self, surface, scale=1, xoff=0, yoff=0):
+        x = self.head.location.x * scale + xoff
+        y = self.head.location.y * scale + yoff - (self.radius() + snake.DEFAULT_NAME_SIZE)
+        
+        render.message_display(surface, self.name, x, y, 15)
 
     def direct_to(self, location):
         dx = location.x - self.head.location.x
