@@ -17,7 +17,7 @@ class dataBase(object):
     # general operations
     def iter_all(self):
         """[summary]
-        
+
         Returns:
             [type] -- [description]
         """
@@ -27,7 +27,7 @@ class dataBase(object):
     # snake operations
     def iter_snakes(self):
         """[summary]
-        
+
         Returns:
             [type] -- [description]
         """
@@ -36,7 +36,7 @@ class dataBase(object):
 
     def iter_snakes_ids(self):
         """[summary]
-        
+
         Returns:
             [type] -- [description]
         """
@@ -45,7 +45,7 @@ class dataBase(object):
 
     def iter_snakes_objects(self):
         """[summary]
-        
+
         Returns:
             [type] -- [description]
         """
@@ -54,7 +54,7 @@ class dataBase(object):
 
     def add_snake(self, id_, object_):
         """[summary]
-        
+
         Arguments:
             id_ {[type]} -- [description]
             object_ {[type]} -- [description]
@@ -64,10 +64,10 @@ class dataBase(object):
 
     def remove_snake(self, id_):
         """[summary]
-        
+
         Arguments:
             id_ {[type]} -- [description]
-        
+
         Raises:
             KeyError -- [description]
         """
@@ -79,11 +79,11 @@ class dataBase(object):
 
     def edit_snake(self, id_, new_object):
         """[summary]
-        
+
         Arguments:
             id_ {[type]} -- [description]
             new_object {[type]} -- [description]
-        
+
         Raises:
             KeyError -- [description]
         """
@@ -95,10 +95,10 @@ class dataBase(object):
 
     def has_snake(self, id_):
         """[summary]
-        
+
         Arguments:
             id_ {[type]} -- [description]
-        
+
         Returns:
             [type] -- [description]
         """
@@ -108,7 +108,7 @@ class dataBase(object):
     # orbs operations
     def iter_orbs(self):
         """[summary]
-        
+
         Returns:
             [type] -- [description]
         """
@@ -117,7 +117,7 @@ class dataBase(object):
 
     def iter_orbs_ids(self):
         """[summary]
-        
+
         Returns:
             [type] -- [description]
         """
@@ -126,7 +126,7 @@ class dataBase(object):
 
     def iter_orbs_objects(self):
         """[summary]
-        
+
         Returns:
             [type] -- [description]
         """
@@ -135,7 +135,7 @@ class dataBase(object):
 
     def add_orb(self, id_, object_):
         """[summary]
-        
+
         Arguments:
             id_ {[type]} -- [description]
             object_ {[type]} -- [description]
@@ -145,10 +145,10 @@ class dataBase(object):
 
     def remove_orb(self, id_):
         """[summary]
-        
+
         Arguments:
             id_ {[type]} -- [description]
-        
+
         Raises:
             KeyError -- [description]
         """
@@ -160,11 +160,11 @@ class dataBase(object):
 
     def edit_orb(self, id_, new_object):
         """[summary]
-        
+
         Arguments:
             id_ {[type]} -- [description]
             new_object {[type]} -- [description]
-        
+
         Raises:
             KeyError -- [description]
         """
@@ -176,10 +176,10 @@ class dataBase(object):
 
     def has_orb(self, id_):
         """[summary]
-        
+
         Arguments:
             id_ {[type]} -- [description]
-        
+
         Returns:
             [type] -- [description]
         """
