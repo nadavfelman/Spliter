@@ -9,9 +9,11 @@ import random
 import socket
 import sys
 import threading
+import time
 
 import dataSets
-import time
+import orb
+import snake
 
 LISTEN_AMOUNT = 20
 GAMEBOARD_WIDTH = 9600
@@ -70,8 +72,10 @@ def main():
 def socket_id(socket_):
     return id(socket_)
 
+
 def orb_id(orb_):
     return id(orb_)
+
 
 class client_thread(threading.Thread):
     """
@@ -130,6 +134,7 @@ class receiving_thread(threading.Thread):
             # change server data
             pass
 
+
 class sending_thread(threading.Thread):
     """
     [summary]
@@ -148,11 +153,12 @@ class sending_thread(threading.Thread):
         self.socket_ = socket_
         self.address = address
         self.id_ = id_
-    
+
     def run(self):
         while True:
             # send data
             pass
+
 
 class game_manipulator(threading.Thread):
     """
@@ -170,12 +176,12 @@ class game_manipulator(threading.Thread):
             self.add_orb()
 
             time.sleep(game_manipulator.PAUSE_DURATION)
-    
+
     def add_orb(self):
         orb_x = random.randint(0, GAMEBOARD_WIDTH)
         orb_y = random.randint(0, GAMEBOARD_HEIGHT)
-        orb_mass = random.randint(orb.MIN_MASS, orb.MAX_MASS)
-        orb_color = random.choice(orb.orb_colors)
+        orb_mass = random.randint(orb.orb.MIN_MASS, orb.orb.MAX_MASS)
+        orb_color = random.choice(orb.orb.ORB_COLORS)
         orb_ = orb.orb(orb_x, orb_y, orb_mass, orb_color)
 
         id_ = orb_id(orb_)
@@ -183,6 +189,7 @@ class game_manipulator(threading.Thread):
         dataBase.add_orb(id_, orb_)
 
         # add to all traffics
+
 
 if __name__ == '__main__':
     main()

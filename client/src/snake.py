@@ -127,11 +127,11 @@ class snake(pygame.sprite.Sprite):
         if dl < 0:
             for _ in xrange(abs(dl)):
                 if self.tail:
-                    loc = self.tail[-1].location
+                    loc = self.tail[-1].get_location()
                 else:
-                    loc = self.head.get_location
+                    loc = self.head.get_location()
 
-                new_sector = joint(loc, self.get_distance(), self.get_radius())
+                new_sector = section(loc, self.get_distance(), self.get_radius())
                 self.tail.append(new_sector)
         elif dl > 0:
             self.tail = self.tail[0: -abs(dl)]
@@ -166,7 +166,7 @@ class snake(pygame.sprite.Sprite):
         previous_location = self.head.get_location()
         for sector in self.tail:
             sector.relocate(previous_location)
-            previous_location = sector.location
+            previous_location = sector.get_location()
 
     def render(self, surface, scale=1, xoff=0, yoff=0):
         self.render_snake(surface, scale=scale, xoff=xoff, yoff=yoff)

@@ -6,8 +6,6 @@ def main():
     display = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     CLOCK = pygame.time.Clock()
 
-    quit_game = False
-
     while True:
         # console prints
         print 'fps: {}'.format(CLOCK.get_fps())
