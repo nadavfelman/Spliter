@@ -14,25 +14,23 @@ class section(pygame.sprite.Sprite):
     def __init__(self, location, distance, radius, angle=0):
         super(section, self).__init__()
 
-        diameter = 2 * radius
-        self.rect = pygame.Rect(0, 0, diameter, diameter)
-        self.rect.center = location
+        self.location = location
         self.distance = distance
         self.radius = radius
         self.angle = angle
 
+    @property
+    def rect(self):
+        diameter = 2 * self.radius
+        rect = pygame.Rect(0, 0, diameter, diameter)
+        rect.center = self.location
+        return rect
+
     def get_location(self):
-        return self.rect.center
+        return self.location
 
     def set_location(self, location):
-        self.rect.center = location
-
-    def set_radius(self, radius):
-        diameter = 2 * self.radius
-        center = self.rect.center
-        self.rect.width = diameter
-        self.rect.height = diameter
-        self.rect.center = center
+        self.location = location
 
     def direct_to(self, location):
         self_x, self_y = self.get_location()
