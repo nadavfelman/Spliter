@@ -57,8 +57,8 @@ class render(object):
     def render(self, surface):
         scale = self.zoom
         xoff, yoff = self.camera_rect.center
-        xoff = -xoff + self.camera_rect.width / 2
-        yoff = -yoff + self.camera_rect.height / 2
+        xoff = -xoff * scale + self.camera_rect.width / 2
+        yoff = -yoff * scale + self.camera_rect.height / 2
 
         self.background_.render(surface, self.camera_rect, scale)
 
