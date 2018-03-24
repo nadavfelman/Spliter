@@ -82,6 +82,6 @@ def incline_angle(p1, p2):
     x1, y1 = p1
     x2, y2 = p2
 
-    dx = x2 - x1
-    dy = y2 - y1
+    dx = x1 - x2
+    dy = y1 - y2
     return atan2(dy, dx)

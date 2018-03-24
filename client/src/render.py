@@ -56,18 +56,21 @@ class render(object):
 
     def render(self, surface):
         scale = self.zoom
-        xoff = self.camera_rect.left
-        yoff = self.camera_rect.top
+        xoff, yoff = self.camera_rect.center
+        xoff = -xoff + self.camera_rect.width / 2
+        yoff = -yoff + self.camera_rect.height / 2
+
+        self.background_.render(surface, self.camera_rect, scale)
 
         snakes = self.dataBase.iter_snakes_objects()
-        in_camera_snakes = filter(
-            lambda s: pygame.sprite.collide_rect(self.camera_rect, s), snakes)
+        # filter(lambda s: self.camera_rect.colliderect(s.), snakes)
+        in_camera_snakes = snakes
         for s in in_camera_snakes:
             render_snake(surface, s, scale, xoff, yoff)
 
-        orbs = self.dataBase.iter_snakes_objects()
+        orbs = self.dataBase.iter_orbs_objects()
         in_camera_orbs = filter(
-            lambda o: pygame.sprite.collide_rect(self.camera_rect, o), orbs)
+            lambda o: self.camera_rect.colliderect(o.rect), orbs)
         for o in in_camera_orbs:
             render_orb(surface, o, scale, xoff, yoff)
 
@@ -104,7 +107,7 @@ class background(object):
         self.x_spacing = x_spacing or background.X_SPACING
         self.y_spacing = y_spacing or background.Y_SPACING
 
-    def draw(self, surface, camera_rect, scl):
+    def render(self, surface, camera_rect, scl):
         camera_x, camera_y = camera_rect.center
         camera_x, camera_y = camera_x * scl, camera_y * scl
 

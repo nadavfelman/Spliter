@@ -5,7 +5,7 @@ import numpy as np
 import render
 
 
-class section(pygame.sprtie.Sprtie):
+class section(pygame.sprite.Sprite):
     """
     [summary] 
 
@@ -36,17 +36,17 @@ class section(pygame.sprtie.Sprtie):
 
     def direct_to(self, location):
         self_x, self_y = self.get_location()
-        x, y = location
+        loc_x, loc_y = location
 
-        dx = x - self_x
-        dy = y - self_y
+        dx = loc_x - self_x
+        dy = loc_y - self_y
         self.angle = math.atan2(dy, dx)
 
     def next_location(self):
         self_x, self_y = self.get_location()
         next_x = self_x + self.distance * math.cos(self.angle)
         next_y = self_y + self.distance * math.sin(self.angle)
-        return pygame.math.Vector2(next_x, next_y)
+        return (next_x, next_y)
 
     def relocate(self, location, max_move=None):
         # break out if already in place
@@ -78,13 +78,19 @@ class section(pygame.sprtie.Sprtie):
                 new_x = loc_x - self.distance * math.cos(self.angle)
                 new_y = loc_y - self.distance * math.sin(self.angle)
                 self.set_location((new_x, new_y))
+    
+    def move(self, move_amount):
+        x, y = self.get_location()
+        new_x = x + move_amount * math.cos(self.angle)
+        new_y = y + move_amount * math.sin(self.angle)
+        self.set_location((new_x, new_y))
 
 
 class snake(pygame.sprite.Sprite):
     """
     [summary]
     """
-    DEFAULT_MASS = 10
+    DEFAULT_MASS = 10000
     DEFAULT_HEAD_COLOR = colors.RED
     DEFAULT_TAIL_COLOR = colors.GRAY66
 
@@ -108,8 +114,10 @@ class snake(pygame.sprite.Sprite):
         self.head = section(location, self.get_distance(), self.get_radius())
         self.tail = []
 
+        self.update_mass()
+
     def get_radius(self):
-        return self.mass / 1000 + 2
+        return self.mass / 1000 + 4
 
     def get_distance(self):
         return self.get_radius() / 2 + 1
@@ -119,6 +127,9 @@ class snake(pygame.sprite.Sprite):
 
     def get_location(self):
         return self.head.get_location()
+    
+    def get_angle(self):
+        return self.head.angle
 
     def update_length(self):
         length = int(self.get_length())
@@ -176,7 +187,7 @@ class snake(pygame.sprite.Sprite):
         # scale vector (for matrix or vector multiplication)
         scale_vector = np.array([[scale, 0], [0, scale]])
         # scaled radius of the circle
-        scaled_radius = int(self.radius() * scale)
+        scaled_radius = int(self.get_radius() * scale)
 
         # draw trail
         # matrix of all the point in the trail
@@ -187,18 +198,16 @@ class snake(pygame.sprite.Sprite):
 
         for x, y in scaled_matrix:
             # scaled x and y of one point with the offset applied
-            x = int(x + xoff)
-            y = int(y + yoff)
-            pos = (x, y)  # position of the joint
+            offsetted_x = int(x + xoff)
+            offsetted_y = int(y + yoff)
+            pos = (offsetted_x, offsetted_y)  # position of the joint
             shadow_x = int(x + xoff + snake.SHADOW_XOFF)
             shadow_y = int(y + yoff + snake.SHADOW_YOFF)
             shadow_pos = (shadow_x, shadow_y)  # position of the shadow
 
             # draw the shadow of the joint
-            pygame.draw.circle(
-                surface, snake.SHADOW_TAIL_COLOR, shadow_pos, scaled_radius)
-            pygame.draw.circle(surface, self.tail_color,
-                               pos, scaled_radius)  # draw the joint
+            pygame.draw.circle(surface, snake.SHADOW_TAIL_COLOR, shadow_pos, scaled_radius)
+            pygame.draw.circle(surface, self.tail_color, pos, scaled_radius)  # draw the joint
 
         # draw head
         # vector representing the location of head
@@ -207,9 +216,9 @@ class snake(pygame.sprite.Sprite):
         x, y = scaled_vector  # scaled x and y
 
         # scaled x and y with the offset applied
-        x = int(x + xoff)
-        y = int(y + yoff)
-        pos = (x, y)  # position of the joint
+        offsetted_x = int(x + xoff)
+        offsetted_y = int(y + yoff)
+        pos = (offsetted_x, offsetted_y)  # position of the joint
         shadow_x = int(x + xoff + snake.SHADOW_XOFF)
         shadow_y = int(y + yoff + snake.SHADOW_YOFF)
         shadow_pos = (shadow_x, shadow_y)  # position of the shadow
@@ -221,12 +230,18 @@ class snake(pygame.sprite.Sprite):
                            pos, scaled_radius)  # draw the joint
 
     def render_name(self, surface, scale=1, xoff=0, yoff=0):
-        x, y = self.get_location()
-        x = x * scale + xoff
-        name_offset = self.radius() + snake.DEFAULT_NAME_SIZE
-        y = y * scale + yoff - name_offset
-
         size = snake.NAME_FONT_SIZE
         color = snake.NAME_FONT_COLOR
-        
+
+        x, y = self.get_location()
+        x = x * scale + xoff
+        name_offset = self.get_radius() + size
+        y = y * scale + yoff - name_offset
+
         render.message_display(surface, self.name, x, y, size, color)
+    
+    def __str__(self):
+        return 'snake obj'
+    
+    def __repr__(self):
+        return 'snake obj'
