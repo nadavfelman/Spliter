@@ -93,7 +93,7 @@ class snake(pygame.sprite.Sprite):
     DEFAULT_TAIL_COLOR = colors.GRAY66
 
     # name variables
-    NAME_FONT_SIZE = 17
+    NAME_FONT_SIZE = 20
     NAME_FONT_COLOR = colors.GRAY25
 
     # render variables
@@ -115,13 +115,13 @@ class snake(pygame.sprite.Sprite):
         self.update_mass()
 
     def get_radius(self):
-        return self.mass / 1000 + 4
+        return self.mass / 3000 + 4
 
     def get_distance(self):
-        return self.get_radius() / 2 + 1
+        return self.mass / 4500 + 3
 
     def get_length(self):
-        return self.mass / 100 + 10
+        return self.mass / 150 + 10
 
     def get_location(self):
         return self.head.get_location()
@@ -159,8 +159,8 @@ class snake(pygame.sprite.Sprite):
 
     def update_mass(self):
         self.update_length()
-        self.update_distance()
         self.update_radius()
+        self.update_distance()
 
     def add_mass(self, amount):
         self.mass += amount
@@ -233,10 +233,19 @@ class snake(pygame.sprite.Sprite):
 
         x, y = self.get_location()
         x = x * scale + xoff
-        name_offset = self.get_radius() + size
+        name_offset = self.get_radius() * scale + size
         y = y * scale + yoff - name_offset
 
         render.message_display(surface, self.name, x, y, size, color)
+    
+    def tail_collide(self, sprite_obj):
+        return any([pygame.sprite.collide_circle(sprite_obj, t) for t in self.tail])
+    
+    def head_collide(self, sprite_obj):
+        return pygame.sprite.collide_circle(sprite_obj, self.head)
+    
+    def any_collide(self, sprite_obj):
+        return self.head_collide(sprite_obj) or self.tail_collide(sprite_obj)
     
     def __str__(self):
         return 'snake obj'

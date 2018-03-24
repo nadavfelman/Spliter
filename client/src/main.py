@@ -6,11 +6,13 @@ import playerSnake
 import orb
 import functions
 import math
+import random
+import settings
 
 
 def main():
     pygame.init()
-    display = pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN)
+    display = pygame.display.set_mode(settings.WINDOW_SIZE, pygame.FULLSCREEN)
     board = pygame.Rect(0, 0, 9600, 5400)
     CLOCK = pygame.time.Clock()
     dataBase = dataSets.dataBase()
@@ -18,10 +20,15 @@ def main():
 
     player = playerSnake.playerSnake((0, 0), 'nadav')
     dataBase.add_snake('1', player)
+    rendering.set_player(player)
+
+    for i in xrange(100):
+        dataBase.add_orb(i, orb.orb(random.randint(0, 200), random.randint(0, 200), random.randint(2, 20), random.choice(orb.orb.ORB_COLORS)))
 
     while True:
         # console prints
-        print 'fps: {}'.format(CLOCK.get_fps())
+        if CLOCK.get_fps() < settings.REFRESH_RATE * 0.8:
+            print 'fps: {}'.format(CLOCK.get_fps())
 
         # event handling
         # pressed = pygame.key.get_pressed()
@@ -53,19 +60,25 @@ def main():
 
         # game handling
         mouse_loc = pygame.mouse.get_pos()
-        middle_loc = (960, 540)
+        middle_loc = settings.WINDOW_CENTER
         new_angle = functions.incline_angle(mouse_loc, middle_loc)
-        player.set_angle(new_angle, limit=math.radians(1.5))
+        player.set_angle(new_angle, limit=playerSnake.playerSnake.MAX_ANGLE_CHANGE)
         player.move()
 
+        for id_, obj in list(dataBase.iter_orbs()):
+            collide = player.any_collide(obj)
+            if collide:
+                dataBase.remove_orb(id_)
+                player.add_mass(obj.mass)
+
         # screen update
-        rendering.set_camera_pos(*player.get_location())
-        rendering.set_zoom(1.5)
+        rendering.set_camera_pos(player.get_location())
+        rendering.set_zoom(20 / player.get_radius() + 1)
         rendering.render(display)
         pygame.display.flip()
 
         # tick timer
-        CLOCK.tick(60)
+        CLOCK.tick(settings.REFRESH_RATE)
 
 
 if __name__ == '__main__':

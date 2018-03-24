@@ -8,8 +8,10 @@ class playerSnake(snake.snake):
     [summary] 
     """
 
-    REGULAR_SPEED = 1
+    REGULAR_SPEED = 0.7
     BOOST_SPEED = 5
+
+    MAX_ANGLE_CHANGE = math.radians(3)
 
     def __init__(self, location, name):
         super(playerSnake, self).__init__(location, name)

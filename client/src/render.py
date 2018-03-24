@@ -26,17 +26,26 @@ class render(object):
             dataBase {dataSets.dataBase} -- [description]
         """
         self.display_rect = display_rect.copy()
-        self.camera_rect = display_rect.copy()
-        self.background_ = background(board_rect)
+        self.board_rect = board_rect.copy()
         self.dataBase = dataBase
+        self.player_snake = None
+
+        self.user_interface = user_interface(display_rect, board_rect)
+        self.background_ = background(board_rect)
+
+        self.camera_pos = (0, 0)
+        self.camera_dim = (display_rect.width, display_rect.height)
         self.zoom = render.DEFAULT_ZOOM
 
-    def set_camera_pos(self, x, y):
-        self.camera_rect.center = (x, y)
+    def set_camera_pos(self, pos):
+        self.camera_pos = pos
 
-    def set_camera_dimensions(self, width, height):
-        self.camera_rect.width = width
-        self.camera_rect.height = height
+    def set_camera_dimensions(self, dim):
+        self.camera_dim = dim
+
+    def set_player(self, player_snake):
+        self.player_snake = player_snake
+        self.user_interface.set_player(player_snake)
 
     def set_zoom(self, zoom):
         """
@@ -49,46 +58,47 @@ class render(object):
         """
         self.zoom = zoom
 
-        center = self.camera_rect.center
-        self.camera_rect.width = self.display_rect.width * (1 / zoom)
-        self.camera_rect.height = self.display_rect.height * (1 / zoom)
-        self.camera_rect.center = center
+        width = self.display_rect.width / zoom
+        height = self.display_rect.height / zoom
+        self.set_camera_dimensions((width, height))
+
+    def get_offsets(self):
+        x, y = self.camera_pos
+        xoff = (-x + self.camera_dim[0] / 2) * self.zoom
+        yoff = (-y + self.camera_dim[1] / 2) * self.zoom
+        return xoff, yoff
 
     def render(self, surface):
-        scale = self.zoom
-        xoff, yoff = self.camera_rect.center
-        xoff = -xoff * scale + self.camera_rect.width / 2
-        yoff = -yoff * scale + self.camera_rect.height / 2
+        self.render_background(surface)
 
-        self.background_.render(surface, self.camera_rect, scale)
+        self.render_orbs(surface)
+        self.render_snakes(surface)
+
+        self.render_user_interface(surface)
+    
+    def render_background(self, surface):
+        self.background_.render(surface, self.camera_pos, self.camera_dim, self.zoom)
+    
+    def render_snakes(self, surface):
+        xoff, yoff = self.get_offsets()
 
         snakes = self.dataBase.iter_snakes_objects()
         # filter(lambda s: self.camera_rect.colliderect(s.), snakes)
         in_camera_snakes = snakes
         for s in in_camera_snakes:
-            render_snake(surface, s, scale, xoff, yoff)
+            render_snake(surface, s, self.zoom, xoff, yoff)
+    
+    def render_orbs(self, surface):
+        xoff, yoff = self.get_offsets()
 
         orbs = self.dataBase.iter_orbs_objects()
-        in_camera_orbs = filter(
-            lambda o: self.camera_rect.colliderect(o.rect), orbs)
+        # filter(lambda o: self.camera_rect.colliderect(o.rect), orbs)
+        in_camera_orbs = orbs
         for o in in_camera_orbs:
-            render_orb(surface, o, scale, xoff, yoff)
-
-
-def render_snake(surface, obj, scale=1, xoff=0, yoff=0):
-    obj.render(surface, scale=scale, xoff=xoff, yoff=yoff)
-
-
-def render_orb(surface, obj, scale=1, xoff=0, yoff=0):
-    obj.render(surface, scale=scale, xoff=xoff, yoff=yoff)
-
-
-def message_display(surface, text, x, y, size, color):
-    font = pygame.font.Font('freesansbold.ttf', size)
-    textSurface = font.render(text, True, color)
-    TextRect = textSurface.get_rect()
-    TextRect.center = (x, y)
-    surface.blit(textSurface, TextRect)
+            render_orb(surface, o, self.zoom, xoff, yoff)
+    
+    def render_user_interface(self, surface):
+        self.user_interface.render(surface)
 
 
 class background(object):
@@ -100,18 +110,18 @@ class background(object):
     SECONDARY_COLOR = colors.GRAY126
     OUTZONE_COLOR = colors.LIGHT_PINK
 
-    def __init__(self, rect, line_thickness=None, x_spacing=None, y_spacing=None):
-        self.board_rect = rect  # board rect
+    def __init__(self, board_rect, line_thickness=None, x_spacing=None, y_spacing=None):
+        self.board_rect = board_rect  # board rect
 
         self.line_thickness = line_thickness or background.LINE_THICKNESS
         self.x_spacing = x_spacing or background.X_SPACING
         self.y_spacing = y_spacing or background.Y_SPACING
 
-    def render(self, surface, camera_rect, scl):
-        camera_x, camera_y = camera_rect.center
+    def render(self, surface, camera_pos, camera_dim, scl):
+        camera_x, camera_y = camera_pos
         camera_x, camera_y = camera_x * scl, camera_y * scl
 
-        width, height = camera_rect.width, camera_rect.height
+        width, height = 1920, 1080
         top = int(camera_y - height / 2)
         right = int(camera_x - width / 2)
         buttom = int(camera_y + height / 2)
@@ -133,3 +143,59 @@ class background(object):
         for y in filter(lambda y: y < self.board_rect.top or y > self.board_rect.bottom, xrange(top, buttom + 1)):
             pygame.draw.line(surface, background.OUTZONE_COLOR,
                              (0, y - top), (width, y - top), 1)
+
+
+class user_interface(object):
+    """
+    [summary]
+    """
+    PLAYER_FONT_COLOR = colors.GRAY25
+    PLAYER_FONT_SIZE = 30
+    PLAYER_MIRGIN = 4
+
+    def __init__(self, display_rect, board_rect):
+        self.display_rect = display_rect
+        self.board_rect = board_rect
+        self.player_snake = None
+
+    def render(self, surface):
+        # self.render_leaderboard(surface)
+        # self.render_minimap(surface)
+        if self.player_snake:
+            self.render_playerstats(surface)
+
+    def set_player(self, player_snake):
+        self.player_snake = player_snake
+
+    def render_leaderboard(self, surface):
+        raise NotImplementedError
+
+    def render_playerstats(self, surface):
+        size = user_interface.PLAYER_FONT_SIZE
+        x = user_interface.PLAYER_MIRGIN
+        y = self.display_rect.bottom - user_interface.PLAYER_MIRGIN - size
+        message = 'your mass: {}'.format(self.player_snake.mass)
+        color = user_interface.PLAYER_FONT_COLOR
+        message_display(surface, message, x, y, size, color, False)
+
+    def render_minimap(self, surface):
+        raise NotImplementedError
+
+
+def render_snake(surface, obj, scale=1, xoff=0, yoff=0):
+    obj.render(surface, scale=scale, xoff=xoff, yoff=yoff)
+
+
+def render_orb(surface, obj, scale=1, xoff=0, yoff=0):
+    obj.render(surface, scale=scale, xoff=xoff, yoff=yoff)
+
+
+def message_display(surface, text, x, y, size, color, center=True):
+    font = pygame.font.Font('freesansbold.ttf', size)
+    textSurface = font.render(text, True, color)
+    TextRect = textSurface.get_rect()
+    if center:
+        TextRect.center = (x, y)
+    else:
+        TextRect.topleft = (x, y)
+    surface.blit(textSurface, TextRect)
