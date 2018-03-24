@@ -88,7 +88,7 @@ class snake(pygame.sprite.Sprite):
     """
     [summary]
     """
-    DEFAULT_MASS = 10000
+    DEFAULT_MASS = 10
     DEFAULT_HEAD_COLOR = colors.RED
     DEFAULT_TAIL_COLOR = colors.GRAY66
 

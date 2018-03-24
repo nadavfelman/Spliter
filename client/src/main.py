@@ -21,7 +21,7 @@ def main():
 
     while True:
         # console prints
-        # print 'fps: {}'.format(CLOCK.get_fps())
+        print 'fps: {}'.format(CLOCK.get_fps())
 
         # event handling
         # pressed = pygame.key.get_pressed()
@@ -55,13 +55,12 @@ def main():
         mouse_loc = pygame.mouse.get_pos()
         middle_loc = (960, 540)
         new_angle = functions.incline_angle(mouse_loc, middle_loc)
-        player.set_angle(new_angle)  # , limit=math.radians(1.5)
-        #player.move()
-        player.relocate(mouse_loc)
+        player.set_angle(new_angle, limit=math.radians(1.5))
+        player.move()
 
         # screen update
         rendering.set_camera_pos(*player.get_location())
-        rendering.set_zoom(1)
+        rendering.set_zoom(1.5)
         rendering.render(display)
         pygame.display.flip()
 
